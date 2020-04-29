@@ -6,6 +6,14 @@
 	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 	<script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
 	<link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+
+	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.css"
+      type="text/css"
+    />
+
 	<script src='index.js'></script>
 	<style>
 		body{
@@ -26,6 +34,19 @@
 	<div id='map'></div>
 	<script>
 
+		let map_points = [
+		{
+			city: "Киев",
+			street: "Смелянская",
+			house: 9
+		},
+		{
+			city: "Киев",
+			street: "Авиаконструктора Антонова",
+			house: 15
+		}
+		]
+
 		mapboxgl.accessToken = 'pk.eyJ1IjoiYWxleDk4MCIsImEiOiJjazgwN3VtZDYwMGcxM2ttdHExcTk3OXZnIn0.4YFfxVoExCKlWi8TnLprkQ';
 
 		var map = new mapboxgl.Map({
@@ -39,6 +60,7 @@
 
 		mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.0/mapbox-gl-rtl-text.js');
 
+		// Translate map to ru.
 		map.addControl(new MapboxLanguage({
 			defaultLanguage: 'ru',
 		}));
@@ -51,9 +73,33 @@
 				},
 				trackUserLocation: true
 			})
-			);
+		);
 
-		</script>
+		var directions = new MapboxDirections({
+	        accessToken: mapboxgl.accessToken,
+	        steps: false,
+	        geometries: 'polyline',
+	        controls: { instructions: false },
+	        unit: 'metric',
+     		profile: 'cycling'
+	      });
 
-	</body>
-	</html>
+      map.addControl(directions, 'top-left');
+
+      // After the map style has loaded on the page, add a source layer and default
+      // styling for a single point.
+      map.on('load', function() {
+       directions.setOrigin( [30.511079935496923,50.440184783462314] ); 
+       directions.addWaypoint(0, [30.489164605687165,50.43604138717842]);
+       directions.addWaypoint(1, [30.48422556603998,50.45439184304928]);
+       directions.addWaypoint(2, [30.40584354044597,50.464007696695035]);
+       directions.addWaypoint(3, [30.36769352706142,50.43675881107765]);
+       directions.setDestination([30.51998917026617,50.418619910619555]); 
+      });
+
+
+
+	</script>
+
+</body>
+</html>
